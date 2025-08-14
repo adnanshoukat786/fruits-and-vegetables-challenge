@@ -2,19 +2,34 @@
 
 namespace App\Service;
 
+use App\Entity\Item;
+
 class StorageService
 {
-    protected string $request = '';
-
     public function __construct(
-        string $request
-    )
+        private CollectionManager $collectionManager,
+        private string $projectDir
+    ) {}
+
+    public function processJsonFile(): void
     {
-        $this->request = $request;
+        $jsonContent = $this->getRequest();
+        $data = json_decode($jsonContent, true);
+
+        foreach ($data as $itemData) {
+            $item = new Item(
+                id: $itemData['id'],
+                name: $itemData['name'],
+                type: $itemData['type'],
+                quantity: $itemData['quantity'],
+                unit: $itemData['unit']
+            );
+            $this->collectionManager->addItem($item);
+        }
     }
 
     public function getRequest(): string
     {
-        return $this->request;
+        return file_get_contents($this->projectDir . '/request.json');
     }
 }
