@@ -30,8 +30,103 @@ or
 * Your code should be tested
 * We don't care how you handle data persistence, no bonus points for having a complex method
 
-## When you are finished
-* Please upload your code to a public git repository (i.e. GitHub, Gitlab)
+## Implementation Complete
+
+This implementation provides a complete fruits and vegetables management system built with Symfony 6.4.
+
+### Features Implemented
+- **Item Entity**: Validation, automatic unit conversion (kg ↔ g)
+- **Collections**: Separate FruitCollection and VegetableCollection with add/remove/list methods  
+- **Storage**: Interface-based in-memory storage with CRUD operations
+- **API Endpoints**: RESTful endpoints for querying and adding items
+- **Search & Filtering**: Name search and quantity range filtering
+- **Unit Conversion**: Flexible display units (grams/kilograms)
+- **Console Commands**: Load data from request.json
+- **Complete Test Suite**: Unit and integration tests with PHPUnit
+
+### Architecture
+- **Entity Layer**: `Item` with validation and unit conversion
+- **Collection Layer**: Abstract base class with concrete implementations
+- **Storage Layer**: Interface-based repository pattern
+- **Service Layer**: `CollectionManager` and enhanced `StorageService`
+- **API Layer**: Controllers with JSON validation and error handling
+
+### Running Tests
+```bash
+# Run all tests
+.phpunit
+```
+
+### Loading Initial Data
+```bash
+# Via console command
+php bin/console app:load-data
+
+# Via API endpoint
+curl http://localhost:8000/load-data
+```
+
+### API Usage Examples
+
+#### Get Collections
+```bash
+# Get all fruits
+curl http://localhost:8000/api/collections/fruits
+
+# Get all vegetables  
+curl http://localhost:8000/api/collections/vegetables
+
+# Get fruits in kilograms
+curl http://localhost:8000/api/collections/fruits?unit=kg
+```
+
+#### Search and Filter
+```bash
+# Search fruits by name
+curl http://localhost:8000/api/collections/fruits/search?q=apple
+
+# Filter by quantity range
+curl http://localhost:8000/api/collections/vegetables?min_quantity=200&max_quantity=1000&unit=g
+
+# Filter by name
+curl http://localhost:8000/api/collections/fruits?name=banana
+```
+
+#### Add New Items
+```bash
+# Add a fruit
+curl -X POST http://localhost:8000/api/items \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Mango","type":"fruit","quantity":1.5,"unit":"kg"}'
+
+# Add a vegetable
+curl -X POST http://localhost:8000/api/items \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Broccoli","type":"vegetable","quantity":300,"unit":"g"}'
+```
+
+#### Remove Items
+```bash
+# Remove item by ID
+curl -X DELETE http://localhost:8000/api/items/1
+```
+
+### API Response Format
+```json
+{
+  "type": "fruits",
+  "count": 2,
+  "items": [
+    {
+      "id": 1,
+      "name": "Apple",
+      "type": "fruit", 
+      "quantity": 500,
+      "unit": "g"
+    }
+  ]
+}
+```
 
 ## 🐳 Docker image
 Optional. Just here if you want to run it isolated.

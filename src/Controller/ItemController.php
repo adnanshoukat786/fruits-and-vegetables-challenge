@@ -52,6 +52,23 @@ $itemRequest->unit);
         }
     }
 
+    #[Route('/api/items/{id}', methods: ['DELETE'])]
+    public function removeItem(int $id): JsonResponse
+    {
+        try {
+            $fruitRemoved = $this->collectionManager->getFruitCollection()->remove($id);
+            $vegetableRemoved = $this->collectionManager->getVegetableCollection()->remove($id);
+            
+            if ($fruitRemoved || $vegetableRemoved) {
+                return $this->json(['message' => 'Item removed successfully'], 200);
+            }
+            
+            return $this->json(['error' => 'Item not found'], 404);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Failed to remove item'], 400);
+        }
+    }
+
     private function generateNewId(): int
     {
         $allItems = $this->collectionManager->getAllItems();
